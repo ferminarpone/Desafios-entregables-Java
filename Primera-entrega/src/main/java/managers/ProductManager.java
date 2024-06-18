@@ -1,34 +1,35 @@
 package managers;
 
 import identities.Client;
+import identities.Product;
 import jakarta.persistence.*;
 
 import java.util.List;
 
-public class ClientManager {
-    public void create(String name, String lastName, Integer dni){
+public class ProductManager {
+    public void create(String description, String code, Double price, Integer stock){
         EntityManager manager = GenericManager.getEntityManager();
         manager.getTransaction().begin();
-        Client cliente = new Client(name, lastName, dni);
-        manager.persist(cliente);
+        Product producto = new Product(description, code, price, stock);
+        manager.persist(producto);
         manager.getTransaction().commit();
         manager.close();
     }
-    public List<Client> readAll(){
+    public List<Product> readAll(){
         EntityManager manager = GenericManager.getEntityManager();
-        List<Client> lista = manager.createQuery("From Client", Client.class).getResultList();
+        List<Product> lista = manager.createQuery("From Product", Product.class).getResultList();
         manager.close();
         return lista;
     }
 
-    public Client readById(Integer id){
+    public Product readById(Integer id){
         EntityManager manager =  GenericManager.getEntityManager();
-        Client cliente = manager.find(Client.class, id);
+        Product prducto = manager.find(Product.class, id);
         manager.close();
-        return cliente;
+        return prducto;
     }
 
-    public void deleteById(Integer id){
+/*    public void deleteById(Integer id){
         EntityManager manager = GenericManager.getEntityManager();
         manager.getTransaction().begin();
         Client cliente = manager.find(Client.class, id);
@@ -38,4 +39,6 @@ public class ClientManager {
         }
         manager.close();
     }
+ */
+
 }

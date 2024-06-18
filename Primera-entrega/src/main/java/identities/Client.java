@@ -2,6 +2,8 @@ package identities;
 
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -10,21 +12,21 @@ public class Client {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     @Column
-    private String nombre;
+    private String name;
     @Column
-    private String apellido;
+    private String lastName;
     @Column
     private Integer dni;
-    @Column
-    private Integer edad;
+
+    @OneToMany(mappedBy = "client", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Invoice> invoices = new ArrayList<>();
 
     public Client() {}
 
-    public Client(String nombre, String apellido, Integer dni, Integer edad) {
-        this.nombre = nombre;
-        this.apellido = apellido;
+    public Client(String name, String lastName, Integer dni) {
+        this.name = name;
+        this.lastName = lastName;
         this.dni = dni;
-        this.edad = edad;
     }
 
     public Integer getId() {
@@ -35,20 +37,20 @@ public class Client {
         this.id = id;
     }
 
-    public String getNombre() {
-        return nombre;
+    public String getName() {
+        return name;
     }
 
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getApellido() {
-        return apellido;
+    public String getLastName() {
+        return lastName;
     }
 
-    public void setApellido(String apellido) {
-        this.apellido = apellido;
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
     public Integer getDni() {
@@ -59,12 +61,12 @@ public class Client {
         this.dni = dni;
     }
 
-    public Integer getEdad() {
-        return edad;
+    public List<Invoice> getInvoices() {
+        return invoices;
     }
 
-    public void setEdad(Integer edad) {
-        this.edad = edad;
+    public void setInvoices(List<Invoice> invoices) {
+        this.invoices = invoices;
     }
 
     @Override
@@ -72,11 +74,11 @@ public class Client {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Client client = (Client) o;
-        return Objects.equals(id, client.id) && Objects.equals(nombre, client.nombre) && Objects.equals(apellido, client.apellido) && Objects.equals(dni, client.dni) && Objects.equals(edad, client.edad);
+        return Objects.equals(id, client.id) && Objects.equals(name, client.name) && Objects.equals(lastName, client.lastName) && Objects.equals(dni, client.dni);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, nombre, apellido, dni, edad);
+        return Objects.hash(id, name, lastName, dni);
     }
 }
