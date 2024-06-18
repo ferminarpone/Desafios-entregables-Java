@@ -21,4 +21,21 @@ public class ClientManager {
         return lista;
     }
 
+    public Client readById(Integer id){
+        EntityManager manager =  GenericManager.getEntityManager();
+        Client cliente = manager.find(Client.class, id);
+        manager.close();
+        return cliente;
+    }
+
+    public void deleteById(Integer id){
+        EntityManager manager = GenericManager.getEntityManager();
+        manager.getTransaction().begin();
+        Client cliente = manager.find(Client.class, id);
+        if( cliente != null){
+            manager.remove(cliente);
+            manager.getTransaction().commit();
+        }
+        manager.close();
+    }
 }
