@@ -10,22 +10,24 @@ public class Invoice_details {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    @ManyToOne
-    @JoinColumn(name = "invoice_id")
-    private Invoice invoice;
     @Column
     private Integer amount;
-    @ManyToMany(mappedBy = "invoiceDetail")
-    private List<Product> products;
     @Column
     private Double price;
+    @ManyToOne
+    @JoinColumn(name = "client_id")
+    private Client client;
+    @ManyToOne
+    @JoinColumn(name = "product_id")
+    private Product product;
 
     public Invoice_details(){}
 
-    public Invoice_details(Invoice invoice, Integer amount, Double price) {
-        this.invoice = invoice;
+    public Invoice_details(Integer amount, Double price, Client client, Product product) {
         this.amount = amount;
         this.price = price;
+        this.client = client;
+        this.product = product;
     }
 
     public Integer getId() {
@@ -36,28 +38,12 @@ public class Invoice_details {
         this.id = id;
     }
 
-    public Invoice getInvoice() {
-        return invoice;
-    }
-
-    public void setInvoice(Invoice invoice) {
-        this.invoice = invoice;
-    }
-
     public Integer getAmount() {
         return amount;
     }
 
     public void setAmount(Integer amount) {
         this.amount = amount;
-    }
-
-    public List<Product> getProducts() {
-        return products;
-    }
-
-    public void setProducts(List<Product> products) {
-        this.products = products;
     }
 
     public Double getPrice() {
@@ -68,27 +54,43 @@ public class Invoice_details {
         this.price = price;
     }
 
+    public Client getClient() {
+        return client;
+    }
+
+    public void setClient(Client client) {
+        this.client = client;
+    }
+
+    public Product getProduct() {
+        return product;
+    }
+
+    public void setProduct(Product product) {
+        this.product = product;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Invoice_details that = (Invoice_details) o;
-        return Objects.equals(id, that.id) && Objects.equals(invoice, that.invoice) && Objects.equals(amount, that.amount) && Objects.equals(products, that.products) && Objects.equals(price, that.price);
+        return Objects.equals(id, that.id) && Objects.equals(amount, that.amount) && Objects.equals(price, that.price) && Objects.equals(client, that.client) && Objects.equals(product, that.product);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, invoice, amount, products, price);
+        return Objects.hash(id, amount, price, client, product);
     }
 
     @Override
     public String toString() {
         return "Invoice_details{" +
                 "id=" + id +
-                ", invoice=" + invoice +
                 ", amount=" + amount +
-                ", products=" + products +
                 ", price=" + price +
+                ", client=" + client +
+                ", product=" + product +
                 '}';
     }
 }

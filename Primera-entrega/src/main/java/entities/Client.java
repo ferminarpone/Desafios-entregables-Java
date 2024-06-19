@@ -16,17 +16,20 @@ public class Client {
     @Column
     private String lastName;
     @Column
-    private Integer dni;
+    private Integer docNumber;
 
     @OneToMany(mappedBy = "client", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Invoice> invoices = new ArrayList<>();
 
+    @OneToMany(mappedBy = "client", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Invoice_details> invoiceDetails = new ArrayList<>();
+
     public Client() {}
 
-    public Client(String name, String lastName, Integer dni) {
+    public Client(String name, String lastName, Integer docNumber) {
         this.name = name;
         this.lastName = lastName;
-        this.dni = dni;
+        this.docNumber = docNumber;
     }
 
     public Integer getId() {
@@ -53,12 +56,12 @@ public class Client {
         this.lastName = lastName;
     }
 
-    public Integer getDni() {
-        return dni;
+    public Integer getDocNumber() {
+        return docNumber;
     }
 
-    public void setDni(Integer dni) {
-        this.dni = dni;
+    public void setDocNumber(Integer docNumber) {
+        this.docNumber = docNumber;
     }
 
     public List<Invoice> getInvoices() {
@@ -69,16 +72,36 @@ public class Client {
         this.invoices = invoices;
     }
 
+    public List<Invoice_details> getInvoiceDetails() {
+        return invoiceDetails;
+    }
+
+    public void setInvoiceDetails(List<Invoice_details> invoiceDetails) {
+        this.invoiceDetails = invoiceDetails;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Client client = (Client) o;
-        return Objects.equals(id, client.id) && Objects.equals(name, client.name) && Objects.equals(lastName, client.lastName) && Objects.equals(dni, client.dni);
+        return Objects.equals(id, client.id) && Objects.equals(name, client.name) && Objects.equals(lastName, client.lastName) && Objects.equals(docNumber, client.docNumber) && Objects.equals(invoices, client.invoices) && Objects.equals(invoiceDetails, client.invoiceDetails);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, lastName, dni);
+        return Objects.hash(id, name, lastName, docNumber, invoices, invoiceDetails);
+    }
+
+    @Override
+    public String toString() {
+        return "Client{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", docNumber=" + docNumber +
+              //  ", invoices=" + invoices +
+              //  ", invoiceDetails=" + invoiceDetails +
+                '}';
     }
 }

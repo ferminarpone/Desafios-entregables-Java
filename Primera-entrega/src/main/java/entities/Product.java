@@ -10,7 +10,6 @@ public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-
     @Column
     private String description;
     @Column
@@ -19,14 +18,8 @@ public class Product {
     private Double price;
     @Column
     private Integer stock;
-
-    @ManyToMany
-    @JoinTable(
-            name = "Product_InvoiceDetail",
-            joinColumns = @JoinColumn(name = "product_id"),
-            inverseJoinColumns = @JoinColumn(name = "invoiceDetail_id")
-    )
-    private List<Invoice_details> invoiceDetail = new ArrayList<>();
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Invoice_details> invoiceDetails = new ArrayList<>();
 
     public Product(){}
 
@@ -77,12 +70,12 @@ public class Product {
         this.stock = stock;
     }
 
-    public List<Invoice_details> getInvoiceDetail() {
-        return invoiceDetail;
+    public List<Invoice_details> getInvoiceDetails() {
+        return invoiceDetails;
     }
 
-    public void setInvoiceDetail(List<Invoice_details> invoiceDetail) {
-        this.invoiceDetail = invoiceDetail;
+    public void setInvoiceDetails(List<Invoice_details> invoiceDetails) {
+        this.invoiceDetails = invoiceDetails;
     }
 
     @Override
@@ -90,11 +83,23 @@ public class Product {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Product product = (Product) o;
-        return Objects.equals(id, product.id) && Objects.equals(description, product.description) && Objects.equals(code, product.code) && Objects.equals(price, product.price) && Objects.equals(stock, product.stock);
+        return Objects.equals(id, product.id) && Objects.equals(description, product.description) && Objects.equals(code, product.code) && Objects.equals(price, product.price) && Objects.equals(stock, product.stock) && Objects.equals(invoiceDetails, product.invoiceDetails);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, description, code, price, stock);
+        return Objects.hash(id, description, code, price, stock, invoiceDetails);
+    }
+
+    @Override
+    public String toString() {
+        return "Product{" +
+                "id=" + id +
+                ", description='" + description + '\'' +
+                ", code='" + code + '\'' +
+                ", price=" + price +
+                ", stock=" + stock +
+              //  ", invoiceDetails=" + invoiceDetails +
+                '}';
     }
 }
