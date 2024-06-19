@@ -1,4 +1,4 @@
-package identities;
+package entities;
 
 import jakarta.persistence.*;
 import java.util.Date;

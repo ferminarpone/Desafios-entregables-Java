@@ -1,7 +1,6 @@
 package managers;
 
-import identities.Client;
-import identities.Product;
+import entities.Product;
 import jakarta.persistence.*;
 
 import java.util.List;

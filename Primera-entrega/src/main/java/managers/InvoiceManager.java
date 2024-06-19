@@ -1,11 +1,11 @@
 package managers;
 
 import entities.Client;
-import jakarta.persistence.*;
+import jakarta.persistence.EntityManager;
 
 import java.util.List;
 
-public class ClientManager {
+public class InvoiceManager {
     public void create(String name, String lastName, Integer dni){
         EntityManager manager = GenericManager.getEntityManager();
         manager.getTransaction().begin();

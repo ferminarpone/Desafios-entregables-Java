@@ -1,7 +1,6 @@
-package identities;
+package entities;
 
 import jakarta.persistence.*;
-import jakarta.persistence.criteria.CriteriaBuilder;
 
 import java.util.List;
 import java.util.Objects;
