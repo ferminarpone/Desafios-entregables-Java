@@ -1,22 +1,25 @@
 package managers;
 
 import entities.Client;
-import jakarta.persistence.*;
+import entities.Invoice_details;
+import entities.Product;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityTransaction;
 
 import java.util.List;
 
-public class ClientManager {
-    public void create(String name, String lastName, Integer docNumber){
+public class InvoiceDetailsManager {
+    public void addToInvoiceDetail(Integer amount, Double price, Client client, Product product){
         EntityManager manager = null;
         EntityTransaction transaction;
         try {
             manager = GenericManager.getEntityManager();
             transaction= manager.getTransaction();
             transaction.begin();
-            Client cliente = new Client(name, lastName, docNumber);
-            manager.persist(cliente);
+            Invoice_details invoiceDetails = new Invoice_details(amount, price, client, product);
+            manager.persist(invoiceDetails);
             transaction.commit();
-            System.out.println("Cliente creado exitosamente");
+            System.out.println("Detalle de factura creado exitosamente");
         }catch (Exception e) {
             System.out.println(e);
         } finally {
@@ -24,7 +27,27 @@ public class ClientManager {
         }
     }
 
-    public List<Client> readAll(){
+    public List<Invoice_details> readByClient(Client client){
+        EntityManager manager = null;
+        List<Invoice_details> lista = null;
+        try {
+            manager = GenericManager.getEntityManager();
+            lista = manager.createQuery("SELECT id FROM Invoice_details id WHERE id.client = :client", Invoice_details.class)
+                    .setParameter("client", client)
+                    .getResultList();
+        }catch (Exception e) {
+            System.out.println(e);
+        } finally {
+            if (manager != null) {
+                manager.close();
+            }
+        }
+        return lista;
+    }
+
+//remove form cart
+
+/*    public List<Client> readAll(){
         EntityManager manager = null;
         List<Client> lista = null;
         try {
@@ -102,5 +125,5 @@ public class ClientManager {
                 manager.close();
             }
         }
-    }
+    }*/
 }

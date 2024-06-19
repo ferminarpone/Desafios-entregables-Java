@@ -20,7 +20,7 @@ public class ProductManager {
         }catch (Exception e) {
             System.out.println(e);
         } finally {
-            GenericManager.closeEntityManagerFactory();
+          manager.close();
         }
     }
     public List<Product> readAll(){
