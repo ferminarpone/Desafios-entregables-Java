@@ -1,7 +1,7 @@
 package managers;
 
 import entities.Client;
-import jakarta.persistence.EntityManager;
+import jakarta.persistence.*;
 
 import java.util.List;
 

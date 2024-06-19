@@ -1,9 +1,7 @@
 package managers;
 
-import entities.Client;
 import entities.Product;
 import jakarta.persistence.*;
-import jakarta.persistence.criteria.CriteriaBuilder;
 
 import java.util.List;
 
@@ -55,6 +53,32 @@ public class ProductManager {
             }
         }
         return product;
+    }
+
+    public void updatedById(Integer id, String description, String code,Double price, Integer stock ){
+        EntityManager manager = null;
+        EntityTransaction transaction;
+        try{
+            manager = GenericManager.getEntityManager();
+            transaction = manager.getTransaction();
+            transaction.begin();
+            Product product = manager.find(Product.class, id);
+            if (product != null) {
+                if(description !=null) product.setDescription(description);
+                if(code !=null) product.setCode(code);
+                if(price !=null) product.setPrice(price);
+                if(stock !=null) product.setStock(stock);
+                manager.merge(product);
+                transaction.commit();
+            }
+            System.out.println("Producto actualizado exitosamente");
+        }catch (Exception e) {
+            System.out.println(e);
+        } finally {
+            if (manager != null) {
+                manager.close();
+            }
+        }
     }
 
     public void deleteById(Integer id) {

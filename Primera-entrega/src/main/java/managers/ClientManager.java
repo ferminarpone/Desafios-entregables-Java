@@ -15,7 +15,7 @@ public class ClientManager {
             transaction.begin();
             Client cliente = new Client(name, lastName, docNumber);
             manager.persist(cliente);
-            manager.getTransaction().commit();
+            transaction.commit();
             System.out.println("Cliente creado exitosamente");
         }catch (Exception e) {
             System.out.println(e);
@@ -54,6 +54,31 @@ public class ClientManager {
             }
         }
         return client;
+    }
+
+    public void updatedById(Integer id, String name, String lastName, Integer docNumber ){
+        EntityManager manager = null;
+        EntityTransaction transaction;
+        try{
+            manager = GenericManager.getEntityManager();
+            transaction = manager.getTransaction();
+            transaction.begin();
+            Client client = manager.find(Client.class, id);
+            if (client != null) {
+                if(name !=null) client.setName(name);
+                if(lastName !=null) client.setLastName(lastName);
+                if(docNumber !=null) client.setDocNumber(docNumber);
+                manager.merge(client);
+                transaction.commit();
+            }
+            System.out.println("Cliente actualizado exitosamente");
+        }catch (Exception e) {
+            System.out.println(e);
+        } finally {
+            if (manager != null) {
+                manager.close();
+            }
+        }
     }
 
     public void deleteById(Integer id) {
