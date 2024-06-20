@@ -1,6 +1,7 @@
 package managers;
 
 import entities.Client;
+import entities.Invoice;
 import entities.Invoice_details;
 import entities.Product;
 import jakarta.persistence.EntityManager;
@@ -19,7 +20,32 @@ public class InvoiceDetailsManager {
             Invoice_details invoiceDetails = new Invoice_details(amount, price, client, product);
             manager.persist(invoiceDetails);
             transaction.commit();
+            ProductManager producto = new ProductManager();
+
+            // if(product.getStock() - amount <= 0) LANZAR EXCEPTCION
+            Integer stock = product.getStock() - amount;
+            producto.updatedById(product.getId(), null, null,null, stock);
             System.out.println("Detalle de factura creado exitosamente");
+        }catch (Exception e) {
+            System.out.println(e);
+        } finally {
+            manager.close();
+        }
+    }
+
+    public void removeToInvoiceDetail(Integer id){
+        EntityManager manager = null;
+        EntityTransaction transaction;
+        try {
+            manager = GenericManager.getEntityManager();
+            transaction= manager.getTransaction();
+            transaction.begin();
+            Invoice_details invoiceDetails = manager.find(Invoice_details.class, id);
+            if (invoiceDetails != null) {
+                manager.remove(invoiceDetails);
+                transaction.commit();
+            }
+            System.out.println("Detalle de factura eliminado exitosamente");
         }catch (Exception e) {
             System.out.println(e);
         } finally {
@@ -45,14 +71,29 @@ public class InvoiceDetailsManager {
         return lista;
     }
 
-//remove form cart
-
-/*    public List<Client> readAll(){
+    public Invoice_details readById(Integer id){
         EntityManager manager = null;
-        List<Client> lista = null;
+        Invoice_details invoiceDetails = null;
         try {
             manager = GenericManager.getEntityManager();
-            lista = manager.createQuery("From Client", Client.class).getResultList();
+            invoiceDetails = manager.find(Invoice_details.class, id);
+        }catch (Exception e) {
+            System.out.println(e);
+        } finally {
+            if (manager != null) {
+                manager.close();
+            }
+        }
+        return invoiceDetails;
+    }
+
+
+    public List<Invoice_details> readAll(){
+        EntityManager manager = null;
+        List<Invoice_details> lista = null;
+        try {
+            manager = GenericManager.getEntityManager();
+            lista = manager.createQuery("From Invoice_details", Invoice_details.class).getResultList();
 
         }catch (Exception e) {
             System.out.println(e);
@@ -63,7 +104,7 @@ public class InvoiceDetailsManager {
         }
         return lista;
     }
-
+/*
     public Client readById(Integer id){
         EntityManager manager = null;
         Client client = null;
