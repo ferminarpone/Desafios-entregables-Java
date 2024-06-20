@@ -1,9 +1,11 @@
 package entities;
 
 import jakarta.persistence.*;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+
 @Entity
 public class Product {
     @Id
@@ -20,7 +22,8 @@ public class Product {
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Invoice_details> invoiceDetails = new ArrayList<>();
 
-    public Product(){}
+    public Product() {
+    }
 
     public Product(String description, String code, Double price, Integer stock) {
         this.description = description;
@@ -98,7 +101,7 @@ public class Product {
                 ", code='" + code + '\'' +
                 ", price=" + price +
                 ", stock=" + stock +
-              //  ", invoiceDetails=" + invoiceDetails +
+                //  ", invoiceDetails=" + invoiceDetails +
                 '}';
     }
 }

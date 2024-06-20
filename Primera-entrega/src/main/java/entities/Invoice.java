@@ -1,7 +1,6 @@
 package entities;
 
 import jakarta.persistence.*;
-
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -19,8 +18,8 @@ public class Invoice {
     @JoinColumn(name = "client_id", nullable = false)
     private Client client;
 
-    public Invoice(){
-        this.created_at =  LocalDateTime.now();
+    public Invoice() {
+        this.created_at = LocalDateTime.now();
     }
 
     public Integer getId() {

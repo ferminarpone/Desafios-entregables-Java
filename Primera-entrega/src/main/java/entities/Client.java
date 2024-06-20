@@ -25,7 +25,8 @@ public class Client {
     @OneToMany(mappedBy = "client", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Invoice_details> invoiceDetails = new ArrayList<>();
 
-    public Client() {}
+    public Client() {
+    }
 
     public Client(String name, String lastName, Integer docNumber) {
         this.name = name;
@@ -101,8 +102,8 @@ public class Client {
                 ", name='" + name + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", docNumber=" + docNumber +
-              //  ", invoices=" + invoices +
-              //  ", invoiceDetails=" + invoiceDetails +
+                //  ", invoices=" + invoices +
+                //  ", invoiceDetails=" + invoiceDetails +
                 '}';
     }
 }

@@ -1,6 +1,7 @@
 package entities;
 
 import jakarta.persistence.*;
+
 import java.util.Objects;
 
 @Entity
@@ -19,7 +20,8 @@ public class Invoice_details {
     @JoinColumn(name = "product_id")
     private Product product;
 
-    public Invoice_details(){}
+    public Invoice_details() {
+    }
 
     public Invoice_details(Integer amount, Double price, Client client, Product product) {
         this.amount = amount;
