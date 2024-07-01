@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping(path = "api/v1/clients")
@@ -17,25 +18,52 @@ public class ClientsController {
     private ClientsService service;
 
     @GetMapping
-    public List<Client> readAllClients(){
+    public ResponseEntity<?> readAllClients(){
         try {
-            return service.readAllClients();
+            List<Client> clientList = service.readAllClients();
+            if ( clientList.isEmpty() ) throw new Exception("Client list is empty");
+            return new ResponseEntity<>(clientList, HttpStatus.OK);
         } catch(Exception exception){
             System.out.println(exception);
-            throw new RuntimeException("READ ALL ERROR");
+            return new ResponseEntity<>(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> readClientById(@NonNull @PathVariable Long id) {
+        try {
+            Optional<Client> client = service.readClientById(id);
+            if (!client.isPresent())  throw new Exception("Client with id: " + id + " not found");
+            return new ResponseEntity<>(client.get(), HttpStatus.OK);
+        } catch (Exception exception) {
+            System.out.println(exception);
+            return new ResponseEntity<>(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @PostMapping
-    public ResponseEntity<Client> createClient(@RequestBody Client data){
+    public ResponseEntity<?> createClient(@RequestBody @NonNull Client data){
         try {
             Client newClient = new Client(data.getId(), data.getName(), data.getLastName(), data.getDocNumber());
-            //VER TEMA DE ERRORES
             Client client =  service.createClient(newClient);
             return new ResponseEntity<>(client, HttpStatus.CREATED);
         }catch (Exception exception){
-            //System.out.println(exception);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            System.out.println(exception);
+            return new ResponseEntity<>(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PostMapping("/{id}")
+    public ResponseEntity<?> updateClient(@PathVariable Long id, @RequestBody @NonNull Client data){
+        try {
+
+            Optional<Client> client =  service.readClientById(id);
+            if (!client.isPresent())  throw new Exception("Client with id: " + id + " not found");
+            // Continuar logica
+            return new ResponseEntity<>(client, HttpStatus.CREATED);
+        }catch (Exception exception){
+            System.out.println(exception);
+            return new ResponseEntity<>(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

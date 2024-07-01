@@ -13,7 +13,7 @@ import java.util.Optional;
 public class ClientsService {
     @Autowired private ClientsRepository repository;
 
-    public Client createClient(Client client){
+    public Client createClient(@NonNull Client client){
         return repository.save(client);
     }
 
