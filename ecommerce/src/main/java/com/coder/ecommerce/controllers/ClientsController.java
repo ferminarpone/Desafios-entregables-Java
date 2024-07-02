@@ -54,12 +54,19 @@ public class ClientsController {
     }
 
     @PostMapping("/{id}")
-    public ResponseEntity<?> updateClient(@PathVariable Long id, @RequestBody @NonNull Client data){
+    public ResponseEntity<?> updateClient(@PathVariable Long id, @RequestBody Client data){
         try {
-
-            Optional<Client> client =  service.readClientById(id);
-            if (!client.isPresent())  throw new Exception("Client with id: " + id + " not found");
+            Optional<Client> foundClient =  service.readClientById(id);
+            if (!foundClient.isPresent())  throw new Exception("Client with id: " + id + " not found");
             // Continuar logica
+            Client client = foundClient.get();
+            if (data.getName() != null) client.setName(data.getName());
+            if (data.getLastName() != null) client.setLastName(data.getLastName());
+            if (data.getDocNumber() != null) client.setDocNumber(data.getDocNumber());
+
+            System.out.println("Probando cliente");
+            System.out.println(client);
+
             return new ResponseEntity<>(client, HttpStatus.CREATED);
         }catch (Exception exception){
             System.out.println(exception);
