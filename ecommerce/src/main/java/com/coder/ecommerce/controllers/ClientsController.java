@@ -25,7 +25,7 @@ public class ClientsController {
             return new ResponseEntity<>(clientList, HttpStatus.OK);
         } catch(Exception exception){
             System.out.println(exception);
-            return new ResponseEntity<>(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Error: " +exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -37,7 +37,7 @@ public class ClientsController {
             return new ResponseEntity<>(client.get(), HttpStatus.OK);
         } catch (Exception exception) {
             System.out.println(exception);
-            return new ResponseEntity<>(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Error: " +exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -45,33 +45,42 @@ public class ClientsController {
     public ResponseEntity<?> createClient(@RequestBody @NonNull Client data){
         try {
             Client newClient = new Client(data.getId(), data.getName(), data.getLastName(), data.getDocNumber());
-            Client client =  service.createClient(newClient);
+            Client client =  service.saveClient(newClient);
             return new ResponseEntity<>(client, HttpStatus.CREATED);
         }catch (Exception exception){
             System.out.println(exception);
-            return new ResponseEntity<>(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Error: " + exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-    @PostMapping("/{id}")
+
+    @PutMapping("/{id}")
     public ResponseEntity<?> updateClient(@PathVariable Long id, @RequestBody Client data){
         try {
             Optional<Client> foundClient =  service.readClientById(id);
             if (!foundClient.isPresent())  throw new Exception("Client with id: " + id + " not found");
-            // Continuar logica
-            Client client = foundClient.get();
-            if (data.getName() != null) client.setName(data.getName());
-            if (data.getLastName() != null) client.setLastName(data.getLastName());
-            if (data.getDocNumber() != null) client.setDocNumber(data.getDocNumber());
-
-            System.out.println("Probando cliente");
-            System.out.println(client);
-
-            return new ResponseEntity<>(client, HttpStatus.CREATED);
+            Client updatedClient = foundClient.get();
+            updatedClient.setName(data.getName());
+            updatedClient.setLastName(data.getLastName());
+            updatedClient.setDocNumber(data.getDocNumber());
+            service.saveClient(updatedClient);
+            return new ResponseEntity<>(updatedClient, HttpStatus.CREATED);
         }catch (Exception exception){
             System.out.println(exception);
-            return new ResponseEntity<>(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Error: " + exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteById(@PathVariable Long id){
+        try {
+            Optional<Client> foundClient = service.readClientById(id);
+            if (!foundClient.isPresent()) throw new Exception("Client with id: " + id + " not found");
+            service.deleteClient(id);
+            return new ResponseEntity<>("Client successfully deleted", HttpStatus.OK);
+        }catch (Exception exception){
+            System.out.println(exception);
+            return new ResponseEntity<>("Error: " + exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }
