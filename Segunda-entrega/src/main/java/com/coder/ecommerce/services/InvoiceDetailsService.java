@@ -1,6 +1,8 @@
 package com.coder.ecommerce.services;
 
+import com.coder.ecommerce.entities.Client;
 import com.coder.ecommerce.entities.Invoice_details;
+import com.coder.ecommerce.entities.Product;
 import com.coder.ecommerce.repositories.InoviceDetailsRepository;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +15,11 @@ import java.util.Optional;
 public class InvoiceDetailsService {
     @Autowired
     private InoviceDetailsRepository repository;
+    @Autowired
+    private ProductsService productsService;
+    @Autowired
+    private ClientsService clientsService;
+
     public Invoice_details saveInvoiceDetails(@NonNull Invoice_details invoiceDetails){
         return repository.save(invoiceDetails);
     }
@@ -27,5 +34,24 @@ public class InvoiceDetailsService {
 
     public void deleteInvoiceDetail(@NonNull Long id){
         repository.deleteById(id);
+    }
+
+    public Product addProductToCart(@NonNull Long productId, @NonNull Long clientId, Integer amount) throws Exception {
+        Optional<Product> foundProduct = productsService.readProductById(productId);
+        if (!foundProduct.isPresent()) throw new Exception("Product not found with id: " + productId);
+        Optional<Client> foundClient = clientsService.readClientById(clientId);
+        if (!foundClient.isPresent()) throw new Exception("Client not found with id: " + clientId);
+
+        Product product = foundProduct.get();
+        Client client = foundClient.get();
+
+        Invoice_details invoiceDetails = new Invoice_details();
+        invoiceDetails.setProduct(product);
+        invoiceDetails.setClient(client);
+        invoiceDetails.setAmount(amount);
+        invoiceDetails.setPrice(product.getPrice());
+        repository.save(invoiceDetails);
+
+        return product;
     }
 }
