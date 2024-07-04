@@ -44,7 +44,11 @@ public class ClientsController {
     @PostMapping
     public ResponseEntity<?> createClient(@RequestBody @NonNull Client data){
         try {
-            Client newClient = new Client(data.getId(), data.getName(), data.getLastName(), data.getDocNumber());
+            Client newClient = new Client();
+            newClient.setId(data.getId());
+            newClient.setName(data.getName());
+            newClient.setLastName(data.getLastName());
+            newClient.setDocNumber(data.getDocNumber());
             Client client =  service.saveClient(newClient);
             return new ResponseEntity<>(client, HttpStatus.CREATED);
         }catch (Exception exception){

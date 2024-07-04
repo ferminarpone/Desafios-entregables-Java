@@ -3,7 +3,9 @@ package com.coder.ecommerce.services;
 import com.coder.ecommerce.entities.Client;
 import com.coder.ecommerce.entities.Invoice_details;
 import com.coder.ecommerce.entities.Product;
+import com.coder.ecommerce.repositories.ClientsRepository;
 import com.coder.ecommerce.repositories.InoviceDetailsRepository;
+import com.coder.ecommerce.repositories.ProductsRepository;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,9 +18,9 @@ public class InvoiceDetailsService {
     @Autowired
     private InoviceDetailsRepository repository;
     @Autowired
-    private ProductsService productsService;
+    private ProductsRepository productsRepository;
     @Autowired
-    private ClientsService clientsService;
+    private ClientsRepository clientsRepository;
 
     public Invoice_details saveInvoiceDetails(@NonNull Invoice_details invoiceDetails){
         return repository.save(invoiceDetails);
@@ -37,9 +39,10 @@ public class InvoiceDetailsService {
     }
 
     public Product addProductToCart(@NonNull Long productId, @NonNull Long clientId, Integer amount) throws Exception {
-        Optional<Product> foundProduct = productsService.readProductById(productId);
+        //Optional<Product> foundProduct = productsService.readProductById(productId);
+        Optional<Product> foundProduct = productsRepository.findById(productId);
         if (!foundProduct.isPresent()) throw new Exception("Product not found with id: " + productId);
-        Optional<Client> foundClient = clientsService.readClientById(clientId);
+        Optional<Client> foundClient = clientsRepository.findById(clientId);
         if (!foundClient.isPresent()) throw new Exception("Client not found with id: " + clientId);
 
         Product product = foundProduct.get();

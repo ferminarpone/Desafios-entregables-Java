@@ -15,10 +15,6 @@ import java.util.Optional;
 public class ProductsService {
     @Autowired
     private ProductsRepository productRepository;
-    @Autowired
-    private InvoiceDetailsService invoiceDetailsService;
-    @Autowired
-    private ClientsService clientsService;
 
     public Product saveProduct(@NonNull Product product) {
         return productRepository.save(product);
