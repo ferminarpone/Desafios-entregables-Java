@@ -38,8 +38,7 @@ public class InvoiceDetailsService {
         repository.deleteById(id);
     }
 
-    public Product addProductToCart(@NonNull Long productId, @NonNull Long clientId, Integer amount) throws Exception {
-        //Optional<Product> foundProduct = productsService.readProductById(productId);
+    public Invoice_details addProductToCart(@NonNull Long productId, @NonNull Long clientId, Integer amount) throws Exception {
         Optional<Product> foundProduct = productsRepository.findById(productId);
         if (!foundProduct.isPresent()) throw new Exception("Product not found with id: " + productId);
         Optional<Client> foundClient = clientsRepository.findById(clientId);
@@ -55,6 +54,6 @@ public class InvoiceDetailsService {
         invoiceDetails.setPrice(product.getPrice());
         repository.save(invoiceDetails);
 
-        return product;
+        return invoiceDetails;
     }
 }

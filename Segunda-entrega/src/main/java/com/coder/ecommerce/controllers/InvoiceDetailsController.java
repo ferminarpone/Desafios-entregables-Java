@@ -1,5 +1,6 @@
 package com.coder.ecommerce.controllers;
 
+import com.coder.ecommerce.dto.AmountProduct;
 import com.coder.ecommerce.entities.Invoice_details;
 import com.coder.ecommerce.services.InvoiceDetailsService;
 import lombok.*;
@@ -52,25 +53,6 @@ public class InvoiceDetailsController {
         }
     }
 
-
-   /* @PutMapping("/{id}")
-    public ResponseEntity<?> updateProduct(@PathVariable Long id, @RequestBody Product data) {
-        try {
-            Optional<Product> foundProduct = service.readProductById(id);
-            if (!foundProduct.isPresent()) throw new Exception("Client with id: " + id + " not found");
-            Product updatedProduct = foundProduct.get();
-            if (data.getDescription() != null) updatedProduct.setDescription(data.getDescription());
-            if (data.getCode() != null) updatedProduct.setCode(data.getCode());
-            if (data.getPrice() != null) updatedProduct.setPrice(data.getPrice());
-            if (data.getStock() != null) updatedProduct.setStock(data.getStock());
-            service.saveProduct(updatedProduct);
-            return new ResponseEntity<>(updatedProduct, HttpStatus.CREATED);
-        } catch (Exception exception) {
-            System.out.println(exception);
-            return new ResponseEntity<>("Error: " + exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }*/
-
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteCartById(@PathVariable Long id) {
         try {
@@ -83,4 +65,16 @@ public class InvoiceDetailsController {
             return new ResponseEntity<>("Error: " + exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @PostMapping("/product/{pid}/client/{cid}")
+    public ResponseEntity<?> addProductToCart(@PathVariable Long pid, @PathVariable Long cid, @RequestBody AmountProduct amount){
+        try {
+            Invoice_details cart =  service.addProductToCart(pid, cid, amount.getAmount());
+            return new ResponseEntity<>(cart, HttpStatus.OK);
+        }catch (Exception exception){
+            System.out.println(exception);
+            return new ResponseEntity<>("Error: " + exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 }

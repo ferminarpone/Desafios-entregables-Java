@@ -41,7 +41,7 @@ public class ClientsController {
         }
     }
 
-    @PostMapping
+    @PostMapping("/register")
     public ResponseEntity<?> createClient(@RequestBody @NonNull Client data){
         try {
             Client newClient = new Client();
