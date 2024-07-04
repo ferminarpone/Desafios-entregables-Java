@@ -22,7 +22,7 @@ public class InvoiceDetailsService {
     @Autowired
     private ClientsRepository clientsRepository;
 
-    public Invoice_details saveInvoiceDetails(@NonNull Invoice_details invoiceDetails){
+    public Invoice_details saveInvoiceDetails(Invoice_details invoiceDetails){
         return repository.save(invoiceDetails);
     }
 
