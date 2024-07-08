@@ -46,7 +46,10 @@ public class InvoiceDetailsService {
 
         Product product = foundProduct.get();
         Client client = foundClient.get();
-
+        //Verificacion de Stock
+        Integer stock = product.getStock() - amount;
+        if(stock < 0) throw new Exception("Stock insuficiente para agregar el producto.");
+        product.setStock(stock);
         Invoice_details invoiceDetails = new Invoice_details();
         invoiceDetails.setProduct(product);
         invoiceDetails.setClient(client);
