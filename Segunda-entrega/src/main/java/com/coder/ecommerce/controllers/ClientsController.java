@@ -21,7 +21,7 @@ public class ClientsController {
     public ResponseEntity<?> readAllClients(){
         try {
             List<Client> clientList = service.readAllClients();
-            if ( clientList.isEmpty() ) throw new Exception("Client list is empty");
+            if ( clientList.isEmpty() ) return new ResponseEntity<>("Client list is empty.", HttpStatus.NO_CONTENT);
             return new ResponseEntity<>(clientList, HttpStatus.OK);
         } catch(Exception exception){
             System.out.println(exception);
@@ -33,7 +33,7 @@ public class ClientsController {
     public ResponseEntity<?> readClientById(@NonNull @PathVariable Long id) {
         try {
             Optional<Client> client = service.readClientById(id);
-            if (!client.isPresent())  throw new Exception("Client with id: " + id + " not found");
+            if (!client.isPresent()) return new ResponseEntity<>("Client with id: " + id + " not found.", HttpStatus.NOT_FOUND);
             return new ResponseEntity<>(client.get(), HttpStatus.OK);
         } catch (Exception exception) {
             System.out.println(exception);
@@ -62,7 +62,7 @@ public class ClientsController {
     public ResponseEntity<?> updateClient(@PathVariable Long id, @RequestBody Client data){
         try {
             Optional<Client> foundClient =  service.readClientById(id);
-            if (!foundClient.isPresent())  throw new Exception("Client with id: " + id + " not found");
+            if (!foundClient.isPresent()) return new ResponseEntity<>("Client with id: " + id + " not found", HttpStatus.NOT_FOUND);
             Client updatedClient = foundClient.get();
             updatedClient.setName(data.getName());
             updatedClient.setLastName(data.getLastName());
@@ -79,7 +79,7 @@ public class ClientsController {
     public ResponseEntity<?> deleteById(@PathVariable Long id){
         try {
             Optional<Client> foundClient = service.readClientById(id);
-            if (!foundClient.isPresent()) throw new Exception("Client with id: " + id + " not found");
+            if (!foundClient.isPresent()) return new ResponseEntity<>("Client with id: " + id + " not found", HttpStatus.NOT_FOUND);
             service.deleteClient(id);
             return new ResponseEntity<>("Client successfully deleted", HttpStatus.OK);
         }catch (Exception exception){

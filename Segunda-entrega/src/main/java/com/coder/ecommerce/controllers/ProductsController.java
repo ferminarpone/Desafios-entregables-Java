@@ -21,7 +21,7 @@ public class ProductsController {
     public ResponseEntity<?> readAllProducts() {
         try {
             List<Product> productList = service.readAllProducts();
-            if (productList.isEmpty()) throw new Exception("Product list is empty");
+            if (productList.isEmpty()) return new ResponseEntity<>("Product list is empty", HttpStatus.NO_CONTENT);
             return new ResponseEntity<>(productList, HttpStatus.OK);
         } catch (Exception exception) {
             System.out.println(exception);
@@ -33,7 +33,7 @@ public class ProductsController {
     public ResponseEntity<?> readProductById(@NonNull @PathVariable Long id) {
         try {
             Optional<Product> product = service.readProductById(id);
-            if (!product.isPresent()) throw new Exception("Product with id: " + id + " not found");
+            if (!product.isPresent()) return new ResponseEntity<>("Product with id: " + id + " not found", HttpStatus.NOT_FOUND);
             return new ResponseEntity<>(product.get(), HttpStatus.OK);
         } catch (Exception exception) {
             System.out.println(exception);
@@ -45,7 +45,7 @@ public class ProductsController {
     public ResponseEntity<?> createProduct(@RequestBody @NonNull Product data) {
         try {
             if (data.getDescription() == null || data.getCode() == null || data.getPrice() == null || data.getStock() == null)
-                throw new Exception("All fields are required.");
+                return new ResponseEntity<>("Required field is missing", HttpStatus.BAD_REQUEST);
             Product product = service.saveProduct(data);
             return new ResponseEntity<>(product, HttpStatus.CREATED);
         } catch (Exception exception) {
@@ -59,7 +59,7 @@ public class ProductsController {
     public ResponseEntity<?> updateProduct(@PathVariable Long id, @RequestBody Product data) {
         try {
             Optional<Product> foundProduct = service.readProductById(id);
-            if (!foundProduct.isPresent()) throw new Exception("Client with id: " + id + " not found");
+            if (!foundProduct.isPresent()) return new ResponseEntity<>("Product with id: " + id + " not found", HttpStatus.NOT_FOUND);
             Product updatedProduct = foundProduct.get();
             if(data.getDescription() !=null) updatedProduct.setDescription(data.getDescription());
             if(data.getCode() !=null) updatedProduct.setCode(data.getCode());
@@ -77,7 +77,7 @@ public class ProductsController {
     public ResponseEntity<?> deleteProductById(@PathVariable Long id) {
         try {
             Optional<Product> foundProduct = service.readProductById(id);
-            if (!foundProduct.isPresent()) throw new Exception("Product with id: " + id + " not found");
+            if (!foundProduct.isPresent()) return new ResponseEntity<>("Product with id: " + id + " not found", HttpStatus.NOT_FOUND);
             service.deleteProduct(id);
             return new ResponseEntity<>("Product successfully deleted", HttpStatus.OK);
         } catch (Exception exception) {
