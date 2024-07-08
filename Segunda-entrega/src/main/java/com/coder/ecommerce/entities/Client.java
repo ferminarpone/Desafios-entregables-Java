@@ -19,10 +19,11 @@ public class Client {
 
     @Getter @Setter @NonNull  private Integer docNumber;
 
-    @Getter @Setter @OneToMany(mappedBy = "client", cascade = CascadeType.ALL, orphanRemoval = true)
+
+    @Column @Getter @Setter @OneToMany(mappedBy = "client", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Invoice> invoices = new ArrayList<>();
 
-    @Getter @Setter @OneToMany(mappedBy = "client", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Column @Getter @Setter @OneToMany(mappedBy = "client", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Invoice_details> invoiceDetails = new ArrayList<>();
 }
 

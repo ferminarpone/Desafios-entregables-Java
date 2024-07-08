@@ -40,11 +40,11 @@ public class InvoiceDetailsController {
         }
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<?> readCartById(@NonNull @PathVariable Long id) {
+    @GetMapping("/{cartId}")
+    public ResponseEntity<?> readCartById(@NonNull @PathVariable Long cartId) {
         try {
-            Optional<Invoice_details> cart = service.readInvoiceDetailById(id);
-            if (!cart.isPresent()) return new ResponseEntity<>("Cart with id: " + id + " not found", HttpStatus.NOT_FOUND);
+            Optional<Invoice_details> cart = service.readInvoiceDetailById(cartId);
+            if (!cart.isPresent()) return new ResponseEntity<>("Cart with id: " + cartId + " not found", HttpStatus.NOT_FOUND);
             return new ResponseEntity<>(cart.get(), HttpStatus.OK);
         } catch (Exception exception) {
             System.out.println(exception);
@@ -63,12 +63,12 @@ public class InvoiceDetailsController {
         }
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteCartById(@PathVariable Long id) {
+    @DeleteMapping("/{cartId}")
+    public ResponseEntity<?> deleteCartById(@PathVariable Long cartId) {
         try {
-            Optional<Invoice_details> foundCart = service.readInvoiceDetailById(id);
-            if (!foundCart.isPresent()) return new ResponseEntity<>("Cart with id: " + id + " not found", HttpStatus.NOT_FOUND);
-            service.deleteInvoiceDetail(id);
+            Optional<Invoice_details> foundCart = service.readInvoiceDetailById(cartId);
+            if (!foundCart.isPresent()) return new ResponseEntity<>("Cart with id: " + cartId + " not found", HttpStatus.NOT_FOUND);
+            service.deleteInvoiceDetail(cartId);
             return new ResponseEntity<>("Cart successfully deleted", HttpStatus.OK);
         } catch (Exception exception) {
             System.out.println(exception);
@@ -76,14 +76,14 @@ public class InvoiceDetailsController {
         }
     }
 
-    @PostMapping("/product/{pid}/client/{cid}")
-    public ResponseEntity<?> addProductToCart(@PathVariable Long pid, @PathVariable Long cid, @RequestBody AmountProduct amount){
+    @PostMapping("/product/{productId}/client/{clientId}")
+    public ResponseEntity<?> addProductToCart(@PathVariable Long productId, @PathVariable Long clientId, @RequestBody AmountProduct amount){
         try {
-            Optional<Product> product = productsService.readProductById(pid);
-            if (product.isEmpty()) return new ResponseEntity<>("Product with id: " + pid + " not found.", HttpStatus.NOT_FOUND);
-            Optional<Client> client = clientsService.readClientById(cid);
-            if (client.isEmpty()) return new ResponseEntity<>("Client with id: " + cid + " not found.", HttpStatus.NOT_FOUND);
-            Invoice_details cart =  service.addProductToCart(pid, cid, amount.getAmount());
+            Optional<Product> product = productsService.readProductById(productId);
+            if (product.isEmpty()) return new ResponseEntity<>("Product with id: " + productId + " not found.", HttpStatus.NOT_FOUND);
+            Optional<Client> client = clientsService.readClientById(clientId);
+            if (client.isEmpty()) return new ResponseEntity<>("Client with id: " + clientId + " not found.", HttpStatus.NOT_FOUND);
+            Invoice_details cart =  service.addProductToCart(productId, clientId, amount.getAmount());
             return new ResponseEntity<>(cart, HttpStatus.OK);
         }catch (Exception exception){
             System.out.println(exception);
@@ -91,20 +91,20 @@ public class InvoiceDetailsController {
         }
     }
 
-    @DeleteMapping("/product/{pid}/cart/{cid}")
-    public ResponseEntity<?> deleteProductFromCart(@PathVariable Long pid, @PathVariable Long cid){
+    @DeleteMapping("/product/{productId}/cart/{cartId}")
+    public ResponseEntity<?> deleteProductFromCart(@PathVariable Long productId, @PathVariable Long cartId){
         try {
-            Optional<Product> foundProduct = productsService.readProductById(pid);
+            Optional<Product> foundProduct = productsService.readProductById(productId);
             if (foundProduct.isEmpty())
-                return new ResponseEntity<>("Product with id: " + pid + " not found.", HttpStatus.NOT_FOUND);
-            Optional<Invoice_details> foundCart = invoiceDetailsService.readInvoiceDetailById(cid);
+                return new ResponseEntity<>("Product with id: " + productId + " not found.", HttpStatus.NOT_FOUND);
+            Optional<Invoice_details> foundCart = invoiceDetailsService.readInvoiceDetailById(cartId);
             if (foundCart.isEmpty())
-                return new ResponseEntity<>("Cart with id: " + cid + " not found.", HttpStatus.NOT_FOUND);
+                return new ResponseEntity<>("Cart with id: " + cartId + " not found.", HttpStatus.NOT_FOUND);
             Invoice_details cart = foundCart.get();
             Product product = foundProduct.get();
             if (!cart.getProduct().equals(product))
                 return new ResponseEntity<>("Product not found in cart.", HttpStatus.NOT_FOUND);
-            service.deleteProductFromCart(pid, cid);
+            service.deleteProductFromCart(productId, cartId);
             return new ResponseEntity<>("Product successfully deleted from cart.", HttpStatus.OK);
         } catch (Exception exception){
             System.out.println(exception);
