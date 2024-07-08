@@ -25,6 +25,8 @@ public class InvoiceDetailsController {
     private ProductsService productsService;
     @Autowired
     private ClientsService clientsService;
+    @Autowired
+    private InvoiceDetailsService invoiceDetailsService;
 
     @GetMapping
     public ResponseEntity<?> readAllCarts() {/**/
@@ -89,4 +91,24 @@ public class InvoiceDetailsController {
         }
     }
 
+    @DeleteMapping("/product/{pid}/cart/{cid}")
+    public ResponseEntity<?> deleteProductFromCart(@PathVariable Long pid, @PathVariable Long cid){
+        try {
+            Optional<Product> foundProduct = productsService.readProductById(pid);
+            if (foundProduct.isEmpty())
+                return new ResponseEntity<>("Product with id: " + pid + " not found.", HttpStatus.NOT_FOUND);
+            Optional<Invoice_details> foundCart = invoiceDetailsService.readInvoiceDetailById(cid);
+            if (foundCart.isEmpty())
+                return new ResponseEntity<>("Cart with id: " + cid + " not found.", HttpStatus.NOT_FOUND);
+            Invoice_details cart = foundCart.get();
+            Product product = foundProduct.get();
+            if (!cart.getProduct().equals(product))
+                return new ResponseEntity<>("Product not found in cart.", HttpStatus.NOT_FOUND);
+            service.deleteProductFromCart(pid, cid);
+            return new ResponseEntity<>("Product successfully deleted from cart.", HttpStatus.OK);
+        } catch (Exception exception){
+            System.out.println(exception);
+            return new ResponseEntity<>("Error: " + exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }
