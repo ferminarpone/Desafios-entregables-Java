@@ -7,6 +7,8 @@ import com.coder.ecommerce.entities.Product;
 import com.coder.ecommerce.services.ClientsService;
 import com.coder.ecommerce.services.InvoiceDetailsService;
 import com.coder.ecommerce.services.ProductsService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,6 +20,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping(path = "api/v1/carts")
+@Tag(name="Cart routes", description = "CRUD of carts.")
 public class InvoiceDetailsController {
     @Autowired
     private InvoiceDetailsService service;
@@ -29,7 +32,8 @@ public class InvoiceDetailsController {
     private InvoiceDetailsService invoiceDetailsService;
 
     @GetMapping
-    public ResponseEntity<?> readAllCarts() {/**/
+    @Operation(summary = "Read all carts from the database.", description = "It returns a List of carts.")
+    public ResponseEntity<?> readAllCarts() {
         try {
             List<Invoice_details> cartList = service.readAllInvoiceDetails();
             if (cartList.isEmpty()) return new ResponseEntity<>("Cart list is empty", HttpStatus.NO_CONTENT);
@@ -41,6 +45,7 @@ public class InvoiceDetailsController {
     }
 
     @GetMapping("/{cartId}")
+    @Operation(summary = "Read a single created cart.", description = "This route requires the cart ID as a parameter. It returns the cart's data.")
     public ResponseEntity<?> readCartById(@NonNull @PathVariable Long cartId) {
         try {
             Optional<Invoice_details> cart = service.readInvoiceDetailById(cartId);
@@ -53,6 +58,7 @@ public class InvoiceDetailsController {
     }
 
     @PostMapping
+    @Operation(summary = "Create a cart.", description = "It returns the created cart.")
     public ResponseEntity<?> createCart(Invoice_details data) {
         try {
             Invoice_details cart = service.saveInvoiceDetails(data);
@@ -64,6 +70,7 @@ public class InvoiceDetailsController {
     }
 
     @DeleteMapping("/{cartId}")
+    @Operation(summary = "Delete a cart.", description = "This route requires the cart ID as a parameter.")
     public ResponseEntity<?> deleteCartById(@PathVariable Long cartId) {
         try {
             Optional<Invoice_details> foundCart = service.readInvoiceDetailById(cartId);
@@ -76,14 +83,15 @@ public class InvoiceDetailsController {
         }
     }
 
-    @PostMapping("/product/{productId}/client/{clientId}")
-    public ResponseEntity<?> addProductToCart(@PathVariable Long productId, @PathVariable Long clientId, @RequestBody AmountProduct amount){
+    @PostMapping("/{clientId}/{productId}/{quantity}")
+    @Operation(summary = "Add product to cart.", description = "This route requires the client ID, product ID and the quantity of product you want to buy as a parameter. It returns the cart's data.")
+    public ResponseEntity<?> addProductToCart(@PathVariable Long clientId, @PathVariable Long productId , @PathVariable Integer quantity){
         try {
             Optional<Product> product = productsService.readProductById(productId);
             if (product.isEmpty()) return new ResponseEntity<>("Product with id: " + productId + " not found.", HttpStatus.NOT_FOUND);
             Optional<Client> client = clientsService.readClientById(clientId);
             if (client.isEmpty()) return new ResponseEntity<>("Client with id: " + clientId + " not found.", HttpStatus.NOT_FOUND);
-            Invoice_details cart =  service.addProductToCart(productId, clientId, amount.getAmount());
+            Invoice_details cart =  service.addProductToCart(productId, clientId, quantity);
             return new ResponseEntity<>(cart, HttpStatus.OK);
         }catch (Exception exception){
             System.out.println(exception);
@@ -91,7 +99,8 @@ public class InvoiceDetailsController {
         }
     }
 
-    @DeleteMapping("/product/{productId}/cart/{cartId}")
+    @DeleteMapping("/{productId}/{cartId}")
+    @Operation(summary = "Delete product from cart.", description = "This route requires the product ID and cart Id as a parameter.")
     public ResponseEntity<?> deleteProductFromCart(@PathVariable Long productId, @PathVariable Long cartId){
         try {
             Optional<Product> foundProduct = productsService.readProductById(productId);

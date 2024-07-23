@@ -2,6 +2,8 @@ package com.coder.ecommerce.controllers;
 
 import com.coder.ecommerce.entities.Client;
 import com.coder.ecommerce.services.ClientsService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,11 +15,13 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping(path = "api/v1/clients")
+@Tag(name="Client routes.", description = "CRUD of clients.")
 public class ClientsController {
     @Autowired
     private ClientsService service;
 
     @GetMapping
+    @Operation(summary = "Read all created clients.", description = "It returns a List of clients.")
     public ResponseEntity<?> readAllClients(){
         try {
             List<Client> clientList = service.readAllClients();
@@ -30,6 +34,7 @@ public class ClientsController {
     }
 
     @GetMapping("/{id}")
+    @Operation(summary = "Read a single created client.", description = "This route requires the client ID as a parameter. It returns the client's data.")
     public ResponseEntity<?> readClientById(@NonNull @PathVariable Long id) {
         try {
             Optional<Client> client = service.readClientById(id);
@@ -42,6 +47,7 @@ public class ClientsController {
     }
 
     @PostMapping("/register")
+    @Operation(summary = "Create a client.", description = "This route requires the complete client data in the body (Name, Last name, Doc. number). It returns the created client.")
     public ResponseEntity<?> createClient(@RequestBody @NonNull Client data){
         try {
             Client newClient = new Client();
@@ -59,6 +65,7 @@ public class ClientsController {
 
 
     @PutMapping("/{id}")
+    @Operation(summary = "Update a client.", description = "This route requires the client ID as a parameter and the client data you want to update in the body. It returns the updated client.")
     public ResponseEntity<?> updateClient(@PathVariable Long id, @RequestBody Client data){
         try {
             Optional<Client> foundClient =  service.readClientById(id);
@@ -76,6 +83,7 @@ public class ClientsController {
     }
 
     @DeleteMapping("/{id}")
+    @Operation(summary = "Delete a client.", description = "This route requires the client ID as a parameter.")
     public ResponseEntity<?> deleteById(@PathVariable Long id){
         try {
             Optional<Client> foundClient = service.readClientById(id);

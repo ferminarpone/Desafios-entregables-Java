@@ -4,6 +4,8 @@ import com.coder.ecommerce.entities.Invoice;
 import com.coder.ecommerce.entities.Invoice_details;
 import com.coder.ecommerce.services.InvoiceDetailsService;
 import com.coder.ecommerce.services.InvoicesService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,6 +17,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/invoices")
+@Tag(name="Invoices routes", description = "CRUD of inovices.")
 public class InovicesController {
     @Autowired
     private InvoicesService service;
@@ -22,6 +25,7 @@ public class InovicesController {
     private InvoiceDetailsService invoiceDetailsService;
 
     @GetMapping
+    @Operation(summary = "Read all invoices from data base.", description = "It returns a List of invoices.")
     public ResponseEntity<?> readAllInvoices(){
         try {
             List<Invoice> invoicesList = service.readAllInvoices();
@@ -34,6 +38,7 @@ public class InovicesController {
     }
 
     @GetMapping("/{id}")
+    @Operation(summary = "Read a single invoice.", description = "This route requires the invoice ID as a parameter. It returns the invoice's data.")
     public ResponseEntity<?> readInvoicetById(@NonNull @PathVariable Long id) {
         try {
             Optional<Invoice> invoice = service.readInvoiceById(id);
@@ -46,6 +51,7 @@ public class InovicesController {
     }
 
     @PostMapping("/cart/{cartId}")
+    @Operation(summary = "Create an invoice.", description = "This route requires the cart ID as a parameter. It returns the created invoice.")
     public ResponseEntity<?> createInvoice(@PathVariable @NonNull Long cartId){
         try {
             Optional<Invoice_details> foundCart = invoiceDetailsService.readInvoiceDetailById(cartId);
@@ -60,6 +66,7 @@ public class InovicesController {
 
 
     @DeleteMapping("/{id}")
+    @Operation(summary = "Delete an invoice.", description = "This route requires the invoice ID as a parameter.")
     public ResponseEntity<?> deleteById(@PathVariable Long id){
         try {
             Optional<Invoice> invoice = service.readInvoiceById(id);

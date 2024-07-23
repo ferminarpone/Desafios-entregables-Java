@@ -2,6 +2,8 @@ package com.coder.ecommerce.controllers;
 
 import com.coder.ecommerce.entities.Product;
 import com.coder.ecommerce.services.ProductsService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,11 +15,13 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping(path = "api/v1/products")
+@Tag(name="Product routes", description = "CRUD of products.")
 public class ProductsController {
     @Autowired
     private ProductsService service;
 
     @GetMapping
+    @Operation(summary = "Read all created products.", description = "It returns a List of products.")
     public ResponseEntity<?> readAllProducts() {
         try {
             List<Product> productList = service.readAllProducts();
@@ -30,6 +34,7 @@ public class ProductsController {
     }
 
     @GetMapping("/{id}")
+    @Operation(summary = "Read a single created product.", description = "This route requires the product ID as a parameter. It returns the product's data.")
     public ResponseEntity<?> readProductById(@NonNull @PathVariable Long id) {
         try {
             Optional<Product> product = service.readProductById(id);
@@ -42,6 +47,7 @@ public class ProductsController {
     }
 
     @PostMapping
+    @Operation(summary = "Create a product.", description = "This route requires the complete product data in the body (Description, Code, Price, Stock). It returns the created product.")
     public ResponseEntity<?> createProduct(@RequestBody @NonNull Product data) {
         try {
             if (data.getDescription() == null || data.getCode() == null || data.getPrice() == null || data.getStock() == null)
@@ -56,6 +62,7 @@ public class ProductsController {
 
 
     @PutMapping("/{id}")
+    @Operation(summary = "Update a product.", description = "This route requires the product ID as a parameter and the product data you want to update in the body. It returns the updated product.")
     public ResponseEntity<?> updateProduct(@PathVariable Long id, @RequestBody Product data) {
         try {
             Optional<Product> foundProduct = service.readProductById(id);
@@ -74,6 +81,7 @@ public class ProductsController {
     }
 
     @DeleteMapping("/{id}")
+    @Operation(summary = "Delete a product.", description = "This route requires the product ID as a parameter.")
     public ResponseEntity<?> deleteProductById(@PathVariable Long id) {
         try {
             Optional<Product> foundProduct = service.readProductById(id);
