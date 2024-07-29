@@ -1,7 +1,7 @@
 package com.coder.ecommerce.controllers;
 
 import com.coder.ecommerce.entities.Product;
-import com.coder.ecommerce.errors.ProductFieldMissingError;
+import com.coder.ecommerce.errors.FieldMissingError;
 import com.coder.ecommerce.errors.ProductNotFoundError;
 import com.coder.ecommerce.services.ProductsService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -30,13 +30,13 @@ public class ProductsController {
     @Operation(summary = "Read all created products.", description = "It returns a List of products.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Products retrieved successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Product.class))),
-            @ApiResponse(responseCode = "204", description = "Products not content", content = @Content(mediaType = "text/plain")),
+            @ApiResponse(responseCode = "204", description = "Products not content", content = @Content),
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(mediaType = "text/plain"))
     })
     public ResponseEntity<?> readAllProducts() {
         try {
             List<Product> productList = service.readAllProducts();
-            if (productList.isEmpty()) return new ResponseEntity<>("Product list is empty", HttpStatus.NO_CONTENT);
+            if (productList.isEmpty()) return new ResponseEntity<>( HttpStatus.NO_CONTENT);
             return new ResponseEntity<>(productList, HttpStatus.OK);
         } catch (Exception exception) {
             System.out.println(exception);
@@ -65,14 +65,14 @@ public class ProductsController {
     @Operation(summary = "Create a product.", description = "This route requires the complete product data in the body (Description, Code, Price, Stock). It returns the created product.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Product created successfully.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Product.class))),
-            @ApiResponse(responseCode = "400", description = "Bad request.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ProductFieldMissingError.class))),
+            @ApiResponse(responseCode = "400", description = "Bad request.", content = @Content(mediaType = "application/json", schema = @Schema(implementation = FieldMissingError.class))),
             @ApiResponse(responseCode = "500", description = "Internal server error.", content = @Content(mediaType = "text/plain"))
     })
     @PostMapping
     public ResponseEntity<?> createProduct(@RequestBody @NonNull Product data) {
         try {
             if (data.getDescription() == null || data.getCode() == null || data.getPrice() == null || data.getStock() == null)
-                return new ResponseEntity<>(new ProductFieldMissingError("Required field is missing."), HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>(new FieldMissingError("Required field is missing."), HttpStatus.BAD_REQUEST);
             Product product = service.saveProduct(data);
             return new ResponseEntity<>(product, HttpStatus.CREATED);
         } catch (Exception exception) {
@@ -109,7 +109,7 @@ public class ProductsController {
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete a product.", description = "This route requires the product ID as a parameter.")
     @ApiResponses( value = {
-            @ApiResponse(responseCode = "200", description = "Product deleted successfully", content = @Content(mediaType = "text/plain")),
+            @ApiResponse(responseCode = "200", description = "Product successfully deleted", content = @Content(mediaType = "text/plain")),
             @ApiResponse(responseCode = "404", description = "Product not found", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ProductNotFoundError.class))),
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(mediaType = "text/plain"))
     })

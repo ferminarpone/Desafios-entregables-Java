@@ -6,13 +6,13 @@ import lombok.*;
 @NoArgsConstructor
 @EqualsAndHashCode
 @ToString
-public class ProductFieldMissingError {
+public class FieldMissingError {
     @Schema(description = "Message error", example = "Required field is missing.")
     @Getter
     @Setter
     private String message;
 
-    public ProductFieldMissingError(String message) {
+    public FieldMissingError(String message) {
         this.message = message;
     }
 }
