@@ -21,7 +21,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping(path = "api/v1/products")
-@Tag(name="Product routes", description = "CRUD of products.")
+@Tag(name = "Product routes", description = "CRUD of products.")
 public class ProductsController {
     @Autowired
     private ProductsService service;
@@ -31,12 +31,13 @@ public class ProductsController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Products retrieved successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Product.class))),
             @ApiResponse(responseCode = "204", description = "Products not content", content = @Content),
+            @ApiResponse(responseCode = "400", description = "Bad request", content = @Content),
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(mediaType = "text/plain"))
     })
     public ResponseEntity<?> readAllProducts() {
         try {
             List<Product> productList = service.readAllProducts();
-            if (productList.isEmpty()) return new ResponseEntity<>( HttpStatus.NO_CONTENT);
+            if (productList.isEmpty()) return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             return new ResponseEntity<>(productList, HttpStatus.OK);
         } catch (Exception exception) {
             System.out.println(exception);
@@ -48,13 +49,15 @@ public class ProductsController {
     @Operation(summary = "Read a single created product.", description = "This route requires the product ID as a parameter. It returns the product's data.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Product retrieved successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Product.class))),
+            @ApiResponse(responseCode = "400", description = "Bad request", content = @Content),
             @ApiResponse(responseCode = "404", description = "Products not found", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ProductNotFoundError.class))),
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(mediaType = "text/plain"))
     })
     public ResponseEntity<?> readProductById(@NonNull @PathVariable Long id) {
         try {
             Optional<Product> product = service.readProductById(id);
-            if (!product.isPresent()) return new ResponseEntity<>("Product with id: " + id + " not found", HttpStatus.NOT_FOUND);
+            if (!product.isPresent())
+                return new ResponseEntity<>("Product with id: " + id + " not found", HttpStatus.NOT_FOUND);
             return new ResponseEntity<>(product.get(), HttpStatus.OK);
         } catch (Exception exception) {
             System.out.println(exception);
@@ -84,22 +87,24 @@ public class ProductsController {
 
     @PutMapping("/{id}")
     @Operation(summary = "Update a product.", description = "This route requires the product ID as a parameter and the product data you want to update in the body. It returns the updated product.")
-    @ApiResponses( value = {
-        @ApiResponse(responseCode = "201", description = "Product updated successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Product.class))),
-        @ApiResponse(responseCode = "404", description = "Product not found", content = @Content(mediaType = "application/json" ,schema = @Schema(implementation = ProductNotFoundError.class))),
-        @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(mediaType = "text/plain"))
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Product updated successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Product.class))),
+            @ApiResponse(responseCode = "400", description = "Bad request", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Product not found", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ProductNotFoundError.class))),
+            @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(mediaType = "text/plain"))
     })
     public ResponseEntity<?> updateProduct(@PathVariable Long id, @RequestBody Product data) {
         try {
             Optional<Product> foundProduct = service.readProductById(id);
-            if (!foundProduct.isPresent()) return new ResponseEntity<>(new ProductNotFoundError("Product with id: " + id + " not found"), HttpStatus.NOT_FOUND);
+            if (!foundProduct.isPresent())
+                return new ResponseEntity<>(new ProductNotFoundError("Product with id: " + id + " not found"), HttpStatus.NOT_FOUND);
             Product updatedProduct = foundProduct.get();
-            if(data.getDescription() !=null) updatedProduct.setDescription(data.getDescription());
-            if(data.getCode() !=null) updatedProduct.setCode(data.getCode());
-            if(data.getPrice() !=null) updatedProduct.setPrice(data.getPrice());
-            if(data.getStock() !=null) updatedProduct.setStock(data.getStock());
+            if (data.getDescription() != null) updatedProduct.setDescription(data.getDescription());
+            if (data.getCode() != null) updatedProduct.setCode(data.getCode());
+            if (data.getPrice() != null) updatedProduct.setPrice(data.getPrice());
+            if (data.getStock() != null) updatedProduct.setStock(data.getStock());
             service.saveProduct(updatedProduct);
-            return new ResponseEntity<>(updatedProduct, HttpStatus.CREATED);
+            return new ResponseEntity<>(updatedProduct, HttpStatus.OK);
         } catch (Exception exception) {
             System.out.println(exception);
             return new ResponseEntity<>("Error: " + exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -108,17 +113,19 @@ public class ProductsController {
 
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete a product.", description = "This route requires the product ID as a parameter.")
-    @ApiResponses( value = {
-            @ApiResponse(responseCode = "200", description = "Product successfully deleted", content = @Content(mediaType = "text/plain")),
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Product successfully deleted", content = @Content(mediaType = "text/plain")),
+            @ApiResponse(responseCode = "400", description = "Bad request", content = @Content),
             @ApiResponse(responseCode = "404", description = "Product not found", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ProductNotFoundError.class))),
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(mediaType = "text/plain"))
     })
     public ResponseEntity<?> deleteProductById(@PathVariable Long id) {
         try {
             Optional<Product> foundProduct = service.readProductById(id);
-            if (!foundProduct.isPresent()) return new ResponseEntity<>("Product with id: " + id + " not found", HttpStatus.NOT_FOUND);
+            if (!foundProduct.isPresent())
+                return new ResponseEntity<>("Product with id: " + id + " not found", HttpStatus.NOT_FOUND);
             service.deleteProduct(id);
-            return new ResponseEntity<>("Product successfully deleted", HttpStatus.OK);
+            return new ResponseEntity<>("Product successfully deleted", HttpStatus.NO_CONTENT);
         } catch (Exception exception) {
             System.out.println(exception);
             return new ResponseEntity<>("Error: " + exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);

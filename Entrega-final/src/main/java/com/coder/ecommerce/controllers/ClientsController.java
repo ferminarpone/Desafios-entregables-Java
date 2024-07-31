@@ -31,6 +31,7 @@ public class ClientsController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Clients retrieved successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Client.class))),
             @ApiResponse(responseCode = "204", description = "Clients not content", content = @Content),
+            @ApiResponse(responseCode = "400", description = "Bad request", content = @Content),
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(mediaType = "text/plain"))
     })
     public ResponseEntity<?> readAllClients(){
@@ -48,6 +49,7 @@ public class ClientsController {
     @Operation(summary = "Read a single created client.", description = "This route requires the client ID as a parameter. It returns the client's data.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Client retrieved successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Client.class))),
+            @ApiResponse(responseCode = "400", description = "Bad request", content = @Content),
             @ApiResponse(responseCode = "404", description = "Client not found", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ClientNotFoundError.class))),
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(mediaType = "text/plain"))
     })
@@ -85,7 +87,8 @@ public class ClientsController {
     @PutMapping("auth/me/{clid}")
     @Operation(summary = "Update a client.", description = "This route requires the client ID as a parameter and the client data you want to update in the body. It returns the updated client.")
     @ApiResponses( value = {
-            @ApiResponse(responseCode = "201", description = "Client updated successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Client.class))),
+            @ApiResponse(responseCode = "200", description = "Client updated successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Client.class))),
+            @ApiResponse(responseCode = "400", description = "Bad request", content = @Content),
             @ApiResponse(responseCode = "404", description = "Client not found", content = @Content(mediaType = "application/json" ,schema = @Schema(implementation = ClientNotFoundError.class))),
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(mediaType = "text/plain"))
     })
@@ -98,7 +101,7 @@ public class ClientsController {
             updatedClient.setLastName(data.getLastName());
             updatedClient.setDocNumber(data.getDocNumber());
             service.saveClient(updatedClient);
-            return new ResponseEntity<>(updatedClient, HttpStatus.CREATED);
+            return new ResponseEntity<>(updatedClient, HttpStatus.OK);
         }catch (Exception exception){
             System.out.println(exception);
             return new ResponseEntity<>("Error: " + exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -108,7 +111,8 @@ public class ClientsController {
     @DeleteMapping("/{clid}")
     @Operation(summary = "Delete a client.", description = "This route requires the client ID as a parameter.")
     @ApiResponses( value = {
-            @ApiResponse(responseCode = "200", description = "Client successfully deleted", content = @Content(mediaType = "text/plain")),
+            @ApiResponse(responseCode = "204", description = "Client successfully deleted", content = @Content(mediaType = "text/plain")),
+            @ApiResponse(responseCode = "400", description = "Bad request", content = @Content),
             @ApiResponse(responseCode = "404", description = "Client not found", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ClientNotFoundError.class))),
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(mediaType = "text/plain"))
     })
@@ -117,7 +121,7 @@ public class ClientsController {
             Optional<Client> foundClient = service.readClientById(clid);
             if (!foundClient.isPresent()) return new ResponseEntity<>(new ClientNotFoundError("Client with id: " + clid + " not found"), HttpStatus.NOT_FOUND);
             service.deleteClient(clid);
-            return new ResponseEntity<>("Client successfully deleted", HttpStatus.OK);
+            return new ResponseEntity<>("Client successfully deleted", HttpStatus.NO_CONTENT);
         }catch (Exception exception){
             System.out.println(exception);
             return new ResponseEntity<>("Error: " + exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
