@@ -163,7 +163,6 @@ public class InvoiceDetailsController {
                 return new ResponseEntity<>(new ProductNotFoundError("Product not found in cart."), HttpStatus.NOT_FOUND);
             service.deleteProductFromCart(pid, cid);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-            //return new ResponseEntity<>(/*"Product successfully deleted from cart.",*/ HttpStatus.NO_CONTENT);
         } catch (Exception exception) {
             System.out.println(exception);
             return new ResponseEntity<>("Error: " + exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);

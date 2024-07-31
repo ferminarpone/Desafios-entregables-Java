@@ -114,7 +114,7 @@ public class ProductsController {
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete a product.", description = "This route requires the product ID as a parameter.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "Product successfully deleted", content = @Content(mediaType = "text/plain")),
+            @ApiResponse(responseCode = "204", description = "Product successfully deleted", content = @Content),
             @ApiResponse(responseCode = "400", description = "Bad request", content = @Content),
             @ApiResponse(responseCode = "404", description = "Product not found", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ProductNotFoundError.class))),
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(mediaType = "text/plain"))
@@ -125,7 +125,7 @@ public class ProductsController {
             if (!foundProduct.isPresent())
                 return new ResponseEntity<>("Product with id: " + id + " not found", HttpStatus.NOT_FOUND);
             service.deleteProduct(id);
-            return new ResponseEntity<>("Product successfully deleted", HttpStatus.NO_CONTENT);
+            return new ResponseEntity<> (HttpStatus.NO_CONTENT);
         } catch (Exception exception) {
             System.out.println(exception);
             return new ResponseEntity<>("Error: " + exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
