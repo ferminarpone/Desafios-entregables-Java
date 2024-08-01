@@ -96,12 +96,12 @@ public class ClientsController {
         try {
             Optional<Client> foundClient =  service.readClientById(clid);
             if (!foundClient.isPresent()) return new ResponseEntity<>(new ClientNotFoundError("Client with id: " + clid + " not found"), HttpStatus.NOT_FOUND);
-            Client updatedClient = foundClient.get();
-            updatedClient.setName(data.getName());
-            updatedClient.setLastName(data.getLastName());
-            updatedClient.setDocNumber(data.getDocNumber());
-            service.saveClient(updatedClient);
-            return new ResponseEntity<>(updatedClient, HttpStatus.OK);
+            Client client = foundClient.get();
+            if (data.getName() != null) client.setName(data.getName());
+            if (data.getLastName() != null) client.setLastName(data.getLastName());
+            if (data.getDocNumber() != null) client.setDocNumber(data.getDocNumber());
+            service.saveClient(client);
+            return new ResponseEntity<>(client, HttpStatus.OK);
         }catch (Exception exception){
             System.out.println(exception);
             return new ResponseEntity<>("Error: " + exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
