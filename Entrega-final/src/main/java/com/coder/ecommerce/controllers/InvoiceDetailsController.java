@@ -38,7 +38,7 @@ public class InvoiceDetailsController {
     private InvoiceDetailsService invoiceDetailsService;
 
     @GetMapping
-    @Operation(summary = "Read all carts from the database.", description = "It returns a List of carts.")
+    @Operation(summary = "Read all carts from the database.", description = "It returns a list of carts.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Carts retrieved successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Invoice_details.class))),
             @ApiResponse(responseCode = "204", description = "Carts not content", content = @Content),
@@ -96,7 +96,7 @@ public class InvoiceDetailsController {
     @DeleteMapping("/{cid}")
     @Operation(summary = "Delete a cart.", description = "This route requires the cart ID as a parameter.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "Cart successfully deleted", content = @Content(mediaType = "text/plain")),
+            @ApiResponse(responseCode = "204", description = "Cart successfully deleted", content = @Content),
             @ApiResponse(responseCode = "400", description = "Bad request", content = @Content),
             @ApiResponse(responseCode = "404", description = "Cart not found", content = @Content(mediaType = "application/json", schema = @Schema(implementation = CartNotFoundError.class))),
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(mediaType = "text/plain"))
@@ -107,7 +107,7 @@ public class InvoiceDetailsController {
             if (!foundCart.isPresent())
                 return new ResponseEntity<>(new CartNotFoundError("Cart with id: " + cid + " not found"), HttpStatus.NOT_FOUND);
             service.deleteInvoiceDetail(cid);
-            return new ResponseEntity<>("Cart successfully deleted", HttpStatus.OK);
+            return new ResponseEntity<>("Cart successfully deleted", HttpStatus.NO_CONTENT);
         } catch (Exception exception) {
             System.out.println(exception);
             return new ResponseEntity<>("Error: " + exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -171,9 +171,10 @@ public class InvoiceDetailsController {
 
     @Operation(summary = "Read all the client's carts that haven't been delivered yet.", description = "This route requires the client ID as a parameter. It's return a client cart list with delivered false.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Carts with devlivered false retrieved successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Invoice_details.class))),
+            @ApiResponse(responseCode = "200", description = "Carts with delivered false retrieved successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Invoice_details.class))),
+            @ApiResponse(responseCode = "204", description = "Cart doesn't have products to delivered.", content = @Content),
             @ApiResponse(responseCode = "400", description = "Bad request", content = @Content),
-            @ApiResponse(responseCode = "404", description = "Product, Client or Cart not found", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ProductNotFoundError.class))),
+            @ApiResponse(responseCode = "404", description = "Product, Client or Cart not found", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ClientNotFoundError.class))),
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(mediaType = "text/plain"))
     })
     @GetMapping("/client/{clid}")
@@ -181,8 +182,9 @@ public class InvoiceDetailsController {
         try {
             Optional<Client> client = clientsService.readClientById(clid);
             if (client.isEmpty())
-                return new ResponseEntity<>("Client with id: " + clid + " not found.", HttpStatus.NOT_FOUND);
+                return new ResponseEntity<>(new ClientNotFoundError("Client with id: " + clid + " not found."), HttpStatus.NOT_FOUND);
             List<Invoice_details> clientCarts = invoiceDetailsService.readCartsFromClient(clid);
+            if (clientCarts.isEmpty()) return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             return new ResponseEntity<>(clientCarts, HttpStatus.OK);
         } catch (Exception exception) {
             return new ResponseEntity<>("Error: " + exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);

@@ -54,12 +54,12 @@ public class InvoicesService {
         repository.deleteById(id);
     }
 
-    public Invoice readLastInvoiceByClientId(@NonNull Long clientId) throws Exception{
+    public Invoice readLastInvoiceByClientId(@NonNull Long clientId) throws Exception {
         Optional<Client> foundClient = clientsRepository.findById(clientId);
         if (foundClient.isEmpty()) throw new Exception("Client not found with id: " + clientId);
         List<Invoice> clientInvoices = foundClient.get().getInvoices();
         if (clientInvoices.isEmpty()) throw new Exception("This client hasn't got any invoices yet.");
-        Invoice lastInvoice = clientInvoices.get(clientInvoices.size()-1);
+        Invoice lastInvoice = clientInvoices.get(clientInvoices.size() - 1);
         return lastInvoice;
     }
 }

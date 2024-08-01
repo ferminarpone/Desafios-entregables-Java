@@ -22,19 +22,19 @@ public class InvoiceDetailsService {
     @Autowired
     private ClientsRepository clientsRepository;
 
-    public Invoice_details saveInvoiceDetails(Invoice_details invoiceDetails){
+    public Invoice_details saveInvoiceDetails(Invoice_details invoiceDetails) {
         return repository.save(invoiceDetails);
     }
 
-    public List<Invoice_details> readAllInvoiceDetails(){
+    public List<Invoice_details> readAllInvoiceDetails() {
         return repository.findAll();
     }
 
-    public Optional<Invoice_details> readInvoiceDetailById(@NonNull Long id){
+    public Optional<Invoice_details> readInvoiceDetailById(@NonNull Long id) {
         return repository.findById(id);
     }
 
-    public void deleteInvoiceDetail(@NonNull Long id){
+    public void deleteInvoiceDetail(@NonNull Long id) {
         repository.deleteById(id);
     }
 
@@ -47,7 +47,7 @@ public class InvoiceDetailsService {
         Client client = foundClient.get();
         //Verificacion de Stock
         Integer stock = product.getStock() - quantity;
-        if(stock < 0) throw new Exception("Stock insuficiente para agregar el producto.");
+        if (stock < 0) throw new Exception("Stock insuficiente para agregar el producto.");
         product.setStock(stock);
         //Creación de carrito
         Invoice_details invoiceDetails = new Invoice_details();
@@ -61,18 +61,18 @@ public class InvoiceDetailsService {
         return invoiceDetails;
     }
 
-    public void deleteProductFromCart(Long productId, Long cartId) throws Exception{
+    public void deleteProductFromCart(Long productId, Long cartId) throws Exception {
         Optional<Product> foundProduct = productsRepository.findById(productId);
         if (!foundProduct.isPresent()) throw new Exception("Product not found with id: " + productId);
         Optional<Invoice_details> foundCart = repository.findById(cartId);
         if (!foundCart.isPresent()) throw new Exception("Cart not found with id: " + cartId);
         Product product = foundProduct.get();
         Invoice_details cart = foundCart.get();
-        if(!cart.getProduct().equals(product)) throw new Exception("Product not found in cart.");
+        if (!cart.getProduct().equals(product)) throw new Exception("Product not found in cart.");
         repository.deleteById(cartId);
     }
 
-    public List<Invoice_details> readCartsFromClient(Long clientId) throws Exception{
+    public List<Invoice_details> readCartsFromClient(Long clientId) throws Exception {
         Optional<Client> foundClient = clientsRepository.findById(clientId);
         if (!foundClient.isPresent()) throw new Exception("Client not found with id: " + clientId);
         List<Invoice_details> cartList = repository.findByClientAndDelivered(foundClient.get(), false);

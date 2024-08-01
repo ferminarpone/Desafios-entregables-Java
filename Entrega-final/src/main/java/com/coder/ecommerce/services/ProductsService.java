@@ -1,7 +1,5 @@
 package com.coder.ecommerce.services;
 
-import com.coder.ecommerce.entities.Client;
-import com.coder.ecommerce.entities.Invoice_details;
 import com.coder.ecommerce.entities.Product;
 import com.coder.ecommerce.repositories.ProductsRepository;
 import lombok.NonNull;

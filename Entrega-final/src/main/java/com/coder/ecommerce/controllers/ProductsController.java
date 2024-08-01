@@ -27,7 +27,7 @@ public class ProductsController {
     private ProductsService service;
 
     @GetMapping
-    @Operation(summary = "Read all created products.", description = "It returns a List of products.")
+    @Operation(summary = "Read all created products.", description = "It returns a list of products.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Products retrieved successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Product.class))),
             @ApiResponse(responseCode = "204", description = "Products not content", content = @Content),
@@ -57,7 +57,7 @@ public class ProductsController {
         try {
             Optional<Product> product = service.readProductById(id);
             if (!product.isPresent())
-                return new ResponseEntity<>("Product with id: " + id + " not found", HttpStatus.NOT_FOUND);
+                return new ResponseEntity<>(new ProductNotFoundError("Product with id: " + id + " not found"), HttpStatus.NOT_FOUND);
             return new ResponseEntity<>(product.get(), HttpStatus.OK);
         } catch (Exception exception) {
             System.out.println(exception);
@@ -125,7 +125,7 @@ public class ProductsController {
             if (!foundProduct.isPresent())
                 return new ResponseEntity<>("Product with id: " + id + " not found", HttpStatus.NOT_FOUND);
             service.deleteProduct(id);
-            return new ResponseEntity<> (HttpStatus.NO_CONTENT);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (Exception exception) {
             System.out.println(exception);
             return new ResponseEntity<>("Error: " + exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);

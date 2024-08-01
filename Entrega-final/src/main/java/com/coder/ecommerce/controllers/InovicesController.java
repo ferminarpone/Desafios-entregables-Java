@@ -26,7 +26,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/invoices")
-@Tag(name="Invoices routes", description = "CRUD of inovices.")
+@Tag(name = "Invoices routes", description = "CRUD of inovices.")
 public class InovicesController {
     @Autowired
     private InvoicesService service;
@@ -36,21 +36,21 @@ public class InovicesController {
     private ClientsService clientsService;
 
     @GetMapping
-    @Operation(summary = "Read all invoices from data base.", description = "It returns a List of invoices.")
+    @Operation(summary = "Read all invoices from data base.", description = "It returns a list of invoices.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Invoices retrieved successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Invoice.class))),
             @ApiResponse(responseCode = "204", description = "Invoices not content", content = @Content),
             @ApiResponse(responseCode = "400", description = "Bad request", content = @Content),
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(mediaType = "text/plain"))
     })
-    public ResponseEntity<?> readAllInvoices(){
+    public ResponseEntity<?> readAllInvoices() {
         try {
             List<Invoice> invoicesList = service.readAllInvoices();
-            if ( invoicesList.isEmpty() ) return new ResponseEntity<>("Invoice list is empty.", HttpStatus.NO_CONTENT);
+            if (invoicesList.isEmpty()) return new ResponseEntity<>("Invoice list is empty.", HttpStatus.NO_CONTENT);
             return new ResponseEntity<>(invoicesList, HttpStatus.OK);
-        } catch(Exception exception){
+        } catch (Exception exception) {
             System.out.println(exception);
-            return new ResponseEntity<>("Error: " +exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Error: " + exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -65,11 +65,12 @@ public class InovicesController {
     public ResponseEntity<?> readInvoicetById(@NonNull @PathVariable Long id) {
         try {
             Optional<Invoice> invoice = service.readInvoiceById(id);
-            if (!invoice.isPresent()) return new ResponseEntity<>(new InvoiceNotFoundError("Invoice with id: " + id + " not found."), HttpStatus.NOT_FOUND);
+            if (!invoice.isPresent())
+                return new ResponseEntity<>(new InvoiceNotFoundError("Invoice with id: " + id + " not found."), HttpStatus.NOT_FOUND);
             return new ResponseEntity<>(invoice.get(), HttpStatus.OK);
         } catch (Exception exception) {
             System.out.println(exception);
-            return new ResponseEntity<>("Error: " +exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Error: " + exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -81,13 +82,14 @@ public class InovicesController {
             @ApiResponse(responseCode = "404", description = "Client not found", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ClientNotFoundError.class))),
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(mediaType = "text/plain"))
     })
-    public ResponseEntity<?> readLastInvoiceByClientId(@PathVariable Long clid){
+    public ResponseEntity<?> readLastInvoiceByClientId(@PathVariable Long clid) {
         try {
             Optional<Client> client = clientsService.readClientById(clid);
-            if (client.isEmpty()) return new ResponseEntity<>(new ClientNotFoundError("Client with id: " + clid + " not found."), HttpStatus.NOT_FOUND);
+            if (client.isEmpty())
+                return new ResponseEntity<>(new ClientNotFoundError("Client with id: " + clid + " not found."), HttpStatus.NOT_FOUND);
             Invoice invoice = service.readLastInvoiceByClientId(clid);
             return new ResponseEntity<>(invoice, HttpStatus.OK);
-        }catch (Exception exception){
+        } catch (Exception exception) {
             System.out.println(exception);
             return new ResponseEntity<>("Error: " + exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -101,15 +103,17 @@ public class InovicesController {
             @ApiResponse(responseCode = "404", description = "Client or cart not found", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ClientNotFoundError.class))),
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(mediaType = "text/plain"))
     })
-    public ResponseEntity<?> createInvoice(@PathVariable @NonNull Long clid){
+    public ResponseEntity<?> createInvoice(@PathVariable @NonNull Long clid) {
         try {
             Optional<Client> client = clientsService.readClientById(clid);
-            if (client.isEmpty()) return new ResponseEntity<>(new ClientNotFoundError("Client with id: " + clid + " not found."), HttpStatus.NOT_FOUND);
+            if (client.isEmpty())
+                return new ResponseEntity<>(new ClientNotFoundError("Client with id: " + clid + " not found."), HttpStatus.NOT_FOUND);
             List<Invoice_details> carts = invoiceDetailsService.readCartsFromClient(clid);
-            if (carts.isEmpty()) return new ResponseEntity<>(new InvoiceNotFoundError("This client doesn't have any cart to deliver."),HttpStatus.NOT_FOUND);
+            if (carts.isEmpty())
+                return new ResponseEntity<>(new InvoiceNotFoundError("This client doesn't have any cart to deliver."), HttpStatus.NOT_FOUND);
             Invoice invoice = service.createInvoice(clid);
             return new ResponseEntity<>(invoice, HttpStatus.CREATED);
-        }catch (Exception exception){
+        } catch (Exception exception) {
             System.out.println(exception);
             return new ResponseEntity<>("Error: " + exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -118,19 +122,20 @@ public class InovicesController {
 
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete an invoice.", description = "This route requires the invoice ID as a parameter.")
-    @ApiResponses( value = {
+    @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Invoice successfully deleted", content = @Content),
             @ApiResponse(responseCode = "400", description = "Bad request", content = @Content),
             @ApiResponse(responseCode = "404", description = "Invoice not found", content = @Content(mediaType = "application/json", schema = @Schema(implementation = InvoiceNotFoundError.class))),
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(mediaType = "text/plain"))
     })
-    public ResponseEntity<?> deleteById(@PathVariable Long id){
+    public ResponseEntity<?> deleteById(@PathVariable Long id) {
         try {
             Optional<Invoice> invoice = service.readInvoiceById(id);
-            if (!invoice.isPresent()) return new ResponseEntity<>(new InvoiceNotFoundError("Invoice with id: " + id + " not found"), HttpStatus.NOT_FOUND);
+            if (!invoice.isPresent())
+                return new ResponseEntity<>(new InvoiceNotFoundError("Invoice with id: " + id + " not found"), HttpStatus.NOT_FOUND);
             service.deleteInvoice(id);
             return new ResponseEntity<>("Invoice successfully deleted", HttpStatus.NO_CONTENT);
-        }catch (Exception exception){
+        } catch (Exception exception) {
             System.out.println(exception);
             return new ResponseEntity<>("Error: " + exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }

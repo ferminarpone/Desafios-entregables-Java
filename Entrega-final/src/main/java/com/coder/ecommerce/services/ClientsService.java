@@ -11,21 +11,22 @@ import java.util.Optional;
 
 @Service
 public class ClientsService {
-    @Autowired private ClientsRepository repository;
+    @Autowired
+    private ClientsRepository repository;
 
-    public Client saveClient(@NonNull Client client){
+    public Client saveClient(@NonNull Client client) {
         return repository.save(client);
     }
 
-    public List<Client> readAllClients(){
+    public List<Client> readAllClients() {
         return repository.findAll();
     }
 
-    public Optional<Client> readClientById(@NonNull Long id){
+    public Optional<Client> readClientById(@NonNull Long id) {
         return repository.findById(id);
     }
 
-    public void deleteClient(@NonNull Long id){
+    public void deleteClient(@NonNull Long id) {
         repository.deleteById(id);
     }
 }
