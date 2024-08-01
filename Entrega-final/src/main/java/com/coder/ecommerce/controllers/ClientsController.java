@@ -111,7 +111,7 @@ public class ClientsController {
     @DeleteMapping("/{clid}")
     @Operation(summary = "Delete a client.", description = "This route requires the client ID as a parameter.")
     @ApiResponses( value = {
-            @ApiResponse(responseCode = "204", description = "Client successfully deleted", content = @Content(mediaType = "text/plain")),
+            @ApiResponse(responseCode = "204", description = "Client successfully deleted", content = @Content),
             @ApiResponse(responseCode = "400", description = "Bad request", content = @Content),
             @ApiResponse(responseCode = "404", description = "Client not found", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ClientNotFoundError.class))),
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(mediaType = "text/plain"))
