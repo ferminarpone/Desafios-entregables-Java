@@ -14,8 +14,6 @@ public class Invoice {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Getter @Setter private Long id;
 
-    // FALTA LA LISTA DE CARRITOS?
-
     @Getter @Setter @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime created_at;
 

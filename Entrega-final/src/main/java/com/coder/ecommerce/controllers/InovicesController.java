@@ -1,7 +1,10 @@
 package com.coder.ecommerce.controllers;
 
+import com.coder.ecommerce.entities.Client;
 import com.coder.ecommerce.entities.Invoice;
 import com.coder.ecommerce.entities.Invoice_details;
+import com.coder.ecommerce.errors.ClientNotFoundError;
+import com.coder.ecommerce.services.ClientsService;
 import com.coder.ecommerce.services.InvoiceDetailsService;
 import com.coder.ecommerce.services.InvoicesService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -23,9 +26,12 @@ public class InovicesController {
     private InvoicesService service;
     @Autowired
     private InvoiceDetailsService invoiceDetailsService;
+    @Autowired
+    private ClientsService clientsService;
 
     @GetMapping
     @Operation(summary = "Read all invoices from data base.", description = "It returns a List of invoices.")
+
     public ResponseEntity<?> readAllInvoices(){
         try {
             List<Invoice> invoicesList = service.readAllInvoices();
@@ -37,7 +43,7 @@ public class InovicesController {
         }
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/invoiceId/{id}")
     @Operation(summary = "Read a single invoice.", description = "This route requires the invoice ID as a parameter. It returns the invoice's data.")
     public ResponseEntity<?> readInvoicetById(@NonNull @PathVariable Long id) {
         try {
@@ -50,13 +56,28 @@ public class InovicesController {
         }
     }
 
-    @PostMapping("/cart/{cartId}")
-    @Operation(summary = "Create an invoice.", description = "This route requires the cart ID as a parameter. It returns the created invoice.")
-    public ResponseEntity<?> createInvoice(@PathVariable @NonNull Long cartId){
+    @GetMapping("/{clid}")
+    public ResponseEntity<?> readLastInvoiceByClientId(@PathVariable Long clid){
         try {
-            Optional<Invoice_details> foundCart = invoiceDetailsService.readInvoiceDetailById(cartId);
-            if(foundCart.isEmpty())  return new ResponseEntity<>("Cart with id: " + cartId + " not found.", HttpStatus.NOT_FOUND);
-            Invoice invoice = service.createInvoice(cartId);
+            Optional<Client> client = clientsService.readClientById(clid);
+            if (client.isEmpty()) return new ResponseEntity<>(new ClientNotFoundError("Client with id: " + clid + " not found."), HttpStatus.NOT_FOUND);
+            Invoice invoice = service.readLastInvoiceByClientId(clid);
+            return new ResponseEntity<>(invoice, HttpStatus.OK);
+        }catch (Exception exception){
+            System.out.println(exception);
+            return new ResponseEntity<>("Error: " + exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PostMapping("/{clid}")
+    @Operation(summary = "Create an invoice.", description = "This route requires the client ID as a parameter. It returns the created invoice.")
+    public ResponseEntity<?> createInvoice(@PathVariable @NonNull Long clid){
+        try {
+            Optional<Client> client = clientsService.readClientById(clid);
+            if (client.isEmpty()) return new ResponseEntity<>(new ClientNotFoundError("Client with id: " + clid + " not found."), HttpStatus.NOT_FOUND);
+            List<Invoice_details> carts = invoiceDetailsService.readCartsFromClient(clid);
+            if (carts.isEmpty()) return new ResponseEntity<>(new ClientNotFoundError("This client doesn't have any cart to deliver."),HttpStatus.NOT_FOUND);
+            Invoice invoice = service.createInvoice(clid);
             return new ResponseEntity<>(invoice, HttpStatus.CREATED);
         }catch (Exception exception){
             System.out.println(exception);
@@ -78,4 +99,5 @@ public class InovicesController {
             return new ResponseEntity<>("Error: " + exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
 }

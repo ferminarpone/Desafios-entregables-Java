@@ -134,7 +134,7 @@ public class InvoiceDetailsController {
             if (stock < 0)
                 return new ResponseEntity<>("Insufficient stock to add the product to the cart.", HttpStatus.CONFLICT);
             Invoice_details cart = service.addProductToCart(pid, clid, quantity);
-            return new ResponseEntity<>(cart, HttpStatus.OK);
+            return new ResponseEntity<>(cart, HttpStatus.CREATED);
         } catch (Exception exception) {
             System.out.println(exception);
             return new ResponseEntity<>("Error: " + exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
